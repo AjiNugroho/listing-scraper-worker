@@ -42,42 +42,83 @@ class InstagramScraper:
         print("→ Navigating to login page...")
         await page.goto("https://www.instagram.com/accounts/login/", wait_until="domcontentloaded")
         await asyncio.sleep(4)
-        
-        # Fill username
-        print("→ Entering username...")
-        await page.fill('input[name="username"]', self.username)
-        await asyncio.sleep(4)
-        
+
+        # Fill email/username — tries both name="email" (new) and name="username" (old)
+        print("→ Entering username/email...")
+        email_input = page.locator("input[name='email'], input[name='username']").first
+        await email_input.wait_for(state="visible", timeout=10000)
+        await email_input.fill(self.username)
+        await asyncio.sleep(1)
+
         # Fill password
         print("→ Entering password...")
-        await page.fill('input[name="password"]', self.password)
-        await asyncio.sleep(4)
-        
-        # Click login button
+        password_input = page.locator("input[name='pass'], input[name='password']").first
+        await password_input.wait_for(state="visible", timeout=10000)
+        await password_input.fill(self.password)
+        await asyncio.sleep(1)
+
+        # Click login button — Instagram now renders the submit as a styled div,
+        # not a <button>. We use multiple strategies in fallback order:
         print("→ Clicking login...")
-        await page.click('button[type="submit"]')
-        
-        # Wait for navigation
+
+        clicked = False
+
+        # Strategy 1: div[role='button'] that contains the text "Log in" or "Log In"
+        for text in ("Log in", "Log In", "Login"):
+            btn = page.locator(f"div[role='button']:has-text('{text}')")
+            if await btn.count() > 0:
+                await btn.first.click()
+                clicked = True
+                break
+
+        # Strategy 2: the submit div sits right after the password field — use
+        # a form-scoped search so we don't accidentally click a nav button
+        if not clicked:
+            btn = page.locator("form div[role='button']").last
+            if await btn.count() > 0:
+                await btn.click()
+                clicked = True
+
+        # Strategy 3: classic button[type='submit'] fallback
+        if not clicked:
+            btn = page.locator("button[type='submit']")
+            if await btn.count() > 0:
+                await btn.first.click()
+                clicked = True
+
+        # Strategy 4: press Enter on the password field — always works
+        if not clicked:
+            await password_input.press("Enter")
+
+        print(f"→ Login button clicked (strategy {'text' if clicked else 'Enter'})")
+
+        # Wait for post-login navigation
         await asyncio.sleep(5)
-        
-        # Handle "Save Login Info" prompt if appears
+
+        # Dismiss "Save Login Info" prompt if it appears
         try:
-            save_info_button = page.locator('button:has-text("Not Now")').first
+            save_info_button = page.locator(
+                "button:has-text('Not Now'), "
+                "div[role='button']:has-text('Not Now')"
+            ).first
             if await save_info_button.count() > 0:
                 await save_info_button.click()
                 await asyncio.sleep(2)
-        except:
+        except Exception:
             pass
-        
-        # Handle "Turn on Notifications" prompt if appears
+
+        # Dismiss "Turn on Notifications" prompt if it appears
         try:
-            notif_button = page.locator('button:has-text("Not Now")').first
+            notif_button = page.locator(
+                "button:has-text('Not Now'), "
+                "div[role='button']:has-text('Not Now')"
+            ).first
             if await notif_button.count() > 0:
                 await notif_button.click()
                 await asyncio.sleep(2)
-        except:
+        except Exception:
             pass
-        
+
         print("✓ Login completed")
     
     async def scrape_posts(self, page, target_url, max_posts=100):

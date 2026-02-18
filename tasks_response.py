@@ -1,6 +1,7 @@
 from celery import shared_task
 import requests
 from requests.exceptions import RequestException
+import os
 
 MAX_RETRIES = 3
 
@@ -22,6 +23,10 @@ def handle_scrape_response(self, payload: dict):
     }
     content_type = payload.get("content_type", "post")
     webhookendpoint = payload.get("webhook_endpoint", "no-webhook")
+
+    target_url = payload.get("url", "no-url")
+    request_items_count = payload.get("requested_max_item", 0)
+    scraper_list_collected_count = payload.get("collected", 0)
 
     # retry_count = payload.get('retry_count', 0)
 
@@ -83,6 +88,41 @@ def handle_scrape_response(self, payload: dict):
             
             # Raise exception for other non-200 status codes
             response.raise_for_status()
+
+            json_resp = response.json()
+
+            worker_report_body = {
+                "worker":"instagram_response_scraper",
+                "task":"handle_scrape_response",
+                "target_url": target_url,
+                "requested_max_item": request_items_count,
+                "scraper_list_collected_count": scraper_list_collected_count,
+                "chunk_start_index": chunk,
+                "chunk_size": len(posts_data),
+                "post_urls": posts_data,
+                "snapshot_id": json_resp.get("snapshot_id", "no-snapshot-id"),
+                "webhook_endpoint": webhookendpoint,
+            }
+
+            base_api_url = os.getenv("SCRAPER_API_URL")
+            report_url = f"{base_api_url}/worker/report"
+            api_key = os.getenv("SCRAPER_API_KEY")
+
+            report_header = {
+                "x-api-key": api_key,
+                "Content-Type": "application/json",
+            }
+
+            try:
+                resp_report = requests.post(
+                    report_url,
+                    headers=report_header,
+                    json=worker_report_body,
+                    timeout=30
+                )
+                print(f"Report API response status for chunk {chunk}: {resp_report.status_code}")
+            except requests.exceptions.RequestException as e:
+                print(f"✗ Failed to report to API for chunk {chunk}: {str(e)}")
             
             print(f"✓ Successfully sent chunk starting at index {chunk} to Brightdata.")
             
