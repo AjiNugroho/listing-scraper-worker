@@ -18,13 +18,13 @@ This project contains a Dockerized version of the scraper worker that runs two C
 
 ```bash
 # Build and start the containers
-docker-compose up -d
+docker compose up -d
 
 # View logs
-docker-compose logs -f
+docker compose logs -f
 
 # Stop the containers
-docker-compose down
+docker compose down
 ```
 
 ### Using Docker directly
