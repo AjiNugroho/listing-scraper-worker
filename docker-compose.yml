@@ -1,0 +1,12 @@
+version: '3.8'
+
+services:
+  scraper-worker:
+    build: .
+    env_file:
+      - .env
+    volumes:
+      - ./instagram_cookies.json:/app/instagram_cookies.json
+    restart: unless-stopped
+    # Ensure the container keeps running
+    command: /app/startup.sh
