@@ -9,16 +9,18 @@ RUN apt-get update && apt-get install -y \
     gnupg \
     && rm -rf /var/lib/apt/lists/*
 
-# Install Playwright browsers
-RUN pip install playwright
-RUN playwright install-deps
-RUN playwright install
-
 # Copy requirements first for better caching
 COPY requirement.txt .
 
 # Install Python dependencies
 RUN pip install --no-cache-dir -r requirement.txt
+
+# Install Playwright system dependencies and browsers into a shared path
+ENV PLAYWRIGHT_BROWSERS_PATH=/ms-playwright
+RUN pip install playwright && \
+    playwright install-deps chromium && \
+    playwright install chromium && \
+    chmod -R 755 /ms-playwright
 
 # Copy application code
 COPY . .
