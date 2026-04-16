@@ -1,18 +1,21 @@
 #!/bin/bash
 set -e
 
-echo "Starting virtual display..."
-Xvfb :99 -screen 0 1920x1080x24 &
-export DISPLAY=:99
+WORKDIR="/home/sebas/Workdir/FAIR/ScraperWorker/listing-scraper-worker"
+VENV="$WORKDIR/.venv/bin"
 
-echo "Starting scraper worker..."
+cd "$WORKDIR"
 
-# Start both Celery workers in the background
 echo "Starting request worker..."
-celery -A celery_app worker -Q scrape_request_listing -n request@%h --loglevel=info --concurrency=1 &
+"$VENV/celery" -A celery_app worker \
+  -Q scrape_request_listing \
+  -n request@%h \
+  --loglevel=info --concurrency=1 &
 
 echo "Starting response worker..."
-celery -A celery_app worker -Q scrape_response_listing -n response@%h --loglevel=info --concurrency=2 &
+"$VENV/celery" -A celery_app worker \
+  -Q scrape_response_listing \
+  -n response@%h \
+  --loglevel=info --concurrency=2 &
 
-# Wait for all background processes
 wait

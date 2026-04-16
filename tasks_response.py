@@ -18,7 +18,7 @@ MAX_RETRIES = 3
 def handle_scrape_response(self, payload: dict):
     url = "https://api.brightdata.com/datasets/v3/trigger"
     headers = {
-        "Authorization": "Bearer 1025af24-494a-4249-8b75-14c5aa71e0ac",
+        "Authorization": f"Bearer {os.getenv('BRIGHTDATA_API_TOKEN')}",
         "Content-Type": "application/json",
     }
     content_type = payload.get("content_type", "post")
