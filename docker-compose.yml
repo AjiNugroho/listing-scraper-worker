@@ -5,8 +5,8 @@ services:
     build: .
     env_file:
       - .env
+    shm_size: '2gb'
     volumes:
       - ./instagram_cookies.json:/app/instagram_cookies.json
     restart: unless-stopped
-    # Ensure the container keeps running
     command: /app/startup.sh
