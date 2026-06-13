@@ -3,6 +3,7 @@ import json
 import os
 from celery import shared_task
 from kombu import Producer, Connection
+
 from dotenv import load_dotenv
 import requests
 
