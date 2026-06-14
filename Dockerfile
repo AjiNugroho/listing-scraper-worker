@@ -36,6 +36,9 @@ RUN pip install playwright && \
 COPY . .
 RUN chmod +x /app/startup.sh
 
+# Pre-create X11 socket dir so Xvfb can run as non-root
+RUN mkdir -p /tmp/.X11-unix && chmod 1777 /tmp/.X11-unix
+
 # Create non-root user and fix ownership of both /app and /ms-playwright
 RUN adduser --disabled-password --gecos '' appuser && \
     chown -R appuser:appuser /app /ms-playwright
