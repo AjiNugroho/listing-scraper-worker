@@ -28,20 +28,6 @@ def handle_scrape_response(self, payload: dict):
     request_items_count = payload.get("requested_max_item", 0)
     scraper_list_collected_count = payload.get("collected", 0)
 
-    # retry_count = payload.get('retry_count', 0)
-
-
-    # if retry_count > MAX_RETRIES:
-    #     print(f"Max retries exceeded for dropping message")
-    #     failed_posts = payload.get("posts", [])
-    #     webhookendpoint = payload.get("webhook_endpoint", "no-webhook")
-    #     # write to csv
-    #     with open("failed_posts.csv", "a") as f:
-    #         for post in failed_posts:
-    #             f.write(f"{post},{webhookendpoint}\n")
-
-    #     return
-
     params_post = {
         "dataset_id": "gd_lk5ns7kz21pck8jpis",
         "endpoint": webhookendpoint,
@@ -104,25 +90,25 @@ def handle_scrape_response(self, payload: dict):
                 "webhook_endpoint": webhookendpoint,
             }
 
-            base_api_url = os.getenv("SCRAPER_API_URL")
-            report_url = f"{base_api_url}/worker/report"
-            api_key = os.getenv("SCRAPER_API_KEY")
+            # base_api_url = os.getenv("SCRAPER_API_URL")
+            # report_url = f"{base_api_url}/worker/report"
+            # api_key = os.getenv("SCRAPER_API_KEY")
 
-            report_header = {
-                "x-api-key": api_key,
-                "Content-Type": "application/json",
-            }
+            # report_header = {
+            #     "x-api-key": api_key,
+            #     "Content-Type": "application/json",
+            # }
 
-            try:
-                resp_report = requests.post(
-                    report_url,
-                    headers=report_header,
-                    json=worker_report_body,
-                    timeout=30
-                )
-                print(f"Report API response status for chunk {chunk}: {resp_report.status_code}")
-            except requests.exceptions.RequestException as e:
-                print(f"✗ Failed to report to API for chunk {chunk}: {str(e)}")
+            # try:
+            #     resp_report = requests.post(
+            #         report_url,
+            #         headers=report_header,
+            #         json=worker_report_body,
+            #         timeout=30
+            #     )
+            #     print(f"Report API response status for chunk {chunk}: {resp_report.status_code}")
+            # except requests.exceptions.RequestException as e:
+            #     print(f"✗ Failed to report to API for chunk {chunk}: {str(e)}")
             
             print(f"✓ Successfully sent chunk starting at index {chunk} to Brightdata.")
             
