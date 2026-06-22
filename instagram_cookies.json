@@ -40,7 +40,7 @@
     "value": "12590839791",
     "domain": ".instagram.com",
     "path": "/",
-    "expires": 1789227061.747366,
+    "expires": 1789908038.291616,
     "httpOnly": false,
     "secure": true
   },
@@ -68,45 +68,45 @@
     "value": "10mdjt5WtenTFo4IscMzAJEAmH5aBBmR",
     "domain": ".instagram.com",
     "path": "/",
-    "expires": 1816011061.747248,
-    "httpOnly": false,
-    "secure": true
-  },
-  {
-    "name": "dpr",
-    "value": "1.5",
-    "domain": ".instagram.com",
-    "path": "/",
-    "expires": 1782055863,
+    "expires": 1816692038.29148,
     "httpOnly": false,
     "secure": true
   },
   {
     "name": "sessionid",
-    "value": "12590839791%3A50fgmVK8vDmvgf%3A16%3AAYjUzMMIwNxevpWGFfWav3Uv3e87YDslrVmRVWe0l_I",
+    "value": "12590839791%3A50fgmVK8vDmvgf%3A16%3AAYhSLILt72g4y9Tpw3o3pWDkVd9LhMC3OAQt5nTqba4",
     "domain": ".instagram.com",
     "path": "/",
-    "expires": 1812672912.942085,
+    "expires": 1813143419.693392,
     "httpOnly": true,
     "secure": true
-  },
-  {
-    "name": "rur",
-    "value": "\"VLL\\05412590839791\\0541812987061:01ff5b1d3ce70afdf4ae7f633cd30e1b3b078616b62f14d9321ceb0f62d059c9cdf090b2\"",
-    "domain": ".instagram.com",
-    "path": "/",
-    "expires": -1,
-    "httpOnly": true,
-    "secure": true,
-    "sameSite": "Lax"
   },
   {
     "name": "wd",
     "value": "1920x1044",
     "domain": ".instagram.com",
     "path": "/",
-    "expires": 1782055867,
+    "expires": 1782736837,
     "httpOnly": false,
+    "secure": true,
+    "sameSite": "Lax"
+  },
+  {
+    "name": "dpr",
+    "value": "1.5",
+    "domain": ".instagram.com",
+    "path": "/",
+    "expires": 1782736837,
+    "httpOnly": false,
+    "secure": true
+  },
+  {
+    "name": "rur",
+    "value": "\"VLL\\05412590839791\\0541813668038:01ff1f5226e481c4a74a00493555f718228eb369ca790f98927fd25c6dd022bd0cb2cfe5\"",
+    "domain": ".instagram.com",
+    "path": "/",
+    "expires": -1,
+    "httpOnly": true,
     "secure": true,
     "sameSite": "Lax"
   }
