@@ -8,6 +8,7 @@ from dotenv import load_dotenv
 import requests
 
 from scraper.instagram_scraper import InstagramScraper
+from scraper.db import save_scrape_result
 
 load_dotenv()
 
@@ -16,6 +17,8 @@ RESPONSE_QUEUE = os.getenv("SCRAPER_RESPONSE_QUEUE","scrape_response_listing")
 
 INSTAGRAM_USERNAME = os.getenv("INSTAGRAM_USERNAME")
 INSTAGRAM_PASSWORD = os.getenv("INSTAGRAM_PASSWORD")
+
+STORE_RESULT_LOCALLY = os.getenv("STORE_RESULT_LOCALLY", "false").lower() == "true"
 
 
 from celery_app import celery_app
@@ -61,11 +64,15 @@ def run_instagram_listing_scraper(self, payload: dict):
         "webhook_endpoint": payload.get("webhook_endpoint","no-webhook"),
     }
 
-    # ---- publish result to response queue ----
-    celery_app.send_task(
-        'handle_scrape_response',
-        kwargs={'payload': result},  
-        queue='scrape_response_listing'
-    )
+    if STORE_RESULT_LOCALLY:
+        # ---- store result in DB instead of publishing to response queue ----
+        save_scrape_result(result)
+    else:
+        # ---- publish result to response queue ----
+        celery_app.send_task(
+            'handle_scrape_response',
+            kwargs={'payload': result},
+            queue='scrape_response_listing'
+        )
 
     return True
