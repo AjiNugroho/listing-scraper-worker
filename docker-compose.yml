@@ -6,7 +6,5 @@ services:
     env_file:
       - .env
     shm_size: '2gb'
-    volumes:
-      - ./instagram_cookies.json:/app/instagram_cookies.json
     restart: unless-stopped
     command: /app/startup.sh
